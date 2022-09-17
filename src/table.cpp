@@ -4,22 +4,26 @@
 #include "table.h"
 
 numerical::Table::Table() {
-    rows = 0;
-    columns = 0;
-    naming = TableNaming::UNNAMED;
-};
+    this->rowNames = nullptr;
+    this->columnNames = nullptr;
+    this->rows = 0;
+    this->columns = 0;
+    this->naming = TableNaming::UNNAMED;
+}
 
 numerical::Table::Table(int64_t rows, int64_t columns, numerical::Table::TableNaming naming) {
+    this->rowNames = nullptr;
+    this->columnNames = nullptr;
     this->rows = rows;
     this-> columns = columns;
-    table = _allocate_table(rows, columns);
+    table = _allocate_table();
     this->naming = naming;
 }
 
 numerical::Table::Table(int64_t rows, int64_t columns, numerical::Table::TableNaming naming, std::vector<std::string> &names) {
     this->rows = rows;
     this-> columns = columns;
-    table = _allocate_table(rows, columns);
+    table = _allocate_table();
     this->naming = naming;
 
     if (naming == TableNaming::NAMED_COLUMNS) {
@@ -40,7 +44,7 @@ numerical::Table::Table(int64_t rows, int64_t columns, std::vector<std::string> 
     this->rows = rows;
     this->columns = columns;
     this->naming = TableNaming::NAMED_ROWS_AND_COLUMNS;
-    this->table = _allocate_table(rows, columns);
+    this->table = _allocate_table();
 
     this->columnNames = &columnNames;
     this->rowNames = &rowNames;
@@ -191,10 +195,11 @@ void numerical::Table::Sort(int64_t columnNumber) {
         ERROR("Can't write don't created table.")
     }
 
+    ERROR("Isn't implemented function")
     //TODO
 }
 
-double **numerical::Table::_allocate_table(int64_t rows, int64_t columns) {
+double **numerical::Table::_allocate_table() {
     auto **_table = static_cast<double **>(malloc(sizeof(double *) * rows));
 
     if (_table == nullptr) {
@@ -360,9 +365,9 @@ void numerical::Table::AddColumn(const std::string &newColumnName) {
         ERROR("Can't add new column name to table without column names")
     }
 
-    (*rowNames).push_back(newColumnName);
+    (*columnNames).push_back(newColumnName);
 
-    _add_row();
+    _add_column();
 
 }
 
@@ -380,7 +385,7 @@ void numerical::Table::_add_row() {
     } else {
         rows += 1;
         if (columns != 0){
-            _allocate_table(rows, columns);
+            table = _allocate_table();
         } else {
             WARNING("Adding row to empty table.")
         }
@@ -400,9 +405,17 @@ void numerical::Table::_add_column() {
     } else {
         columns += 1;
         if (rows != 0){
-            _allocate_table(rows, columns);
+            table = _allocate_table();
         } else {
             WARNING("Adding column to empty table.")
         }
     }
+}
+
+numerical::Table::Table(numerical::Table::TableNaming naming) {
+    this->rowNames = nullptr;
+    this->columnNames = nullptr;
+    this->rows = 0;
+    this->columns = 0;
+    this->naming = naming;
 }

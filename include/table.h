@@ -29,15 +29,24 @@ namespace numerical{
         };
         typedef TableNaming TableNaming;
 
+        // Create empty unnamed table
         Table();
+        // Create empty table with set naming
+        explicit Table(TableNaming naming);
+        // Create table with rows and columns with set naming
         Table(int64_t rows, int64_t columns, TableNaming naming);
+        // Create table with rows and columns with named only rows or columns
         Table(int64_t rows, int64_t columns, TableNaming naming, std::vector<std::string> &names);
+        // Create table with rows and columns with named rows and columns
         Table(int64_t rows, int64_t columns, std::vector<std::string> &columnNames, std::vector<std::string> &rowNames);
 
         ~Table();
 
+        // Read table from file
         void Read(TableType type, const std::string& filename);
+        // Write table to file
         void Write(TableType type, const std::string& filename);
+        // Prints table to console
         void Print(TableType type);
 
         void AddRow();
@@ -47,10 +56,11 @@ namespace numerical{
 
         void Sort(int64_t columnNumber);
 
-        // Returns elements of the matrix
+        // Returns elements of the table
         double& operator() (int64_t i, int64_t j);
         const double& operator () (int64_t i, int64_t j) const;
 
+        // Number of digits after a coma
         int16_t outputPrecision = 3;
     private:
         int64_t rows;
@@ -61,7 +71,7 @@ namespace numerical{
         std::vector<std::string> *rowNames;
         TableNaming naming;
 
-        double **_allocate_table(int64_t rows, int64_t columns);
+        double **_allocate_table();
         void _add_row();
         void _add_column();
     };

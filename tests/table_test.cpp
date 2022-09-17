@@ -25,10 +25,10 @@ int main(int argc, char *argv[]){
     a.Write(numerical::Table::TSV_TABLE, "../tests/table.tsv");
 
     a.outputPrecision = 1;
-    a.Print(numerical::Table::GNUPLOT_TABLE);
-    a.AddColumn();
-    a.AddRow();
-
+    a.Print(numerical::Table::CSV_TABLE);
+    a.AddColumn("blablabla");
+    a.AddRow("blablabla");
+    a.Print(numerical::Table::CSV_TABLE);
 
     return 0;
 }
