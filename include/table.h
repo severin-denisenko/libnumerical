@@ -34,20 +34,22 @@ namespace numerical{
         // Create empty table with set naming
         explicit Table(TableNaming naming);
         // Create table with rows and columns with set naming
-        Table(int64_t rows, int64_t columns, TableNaming naming);
+        Table(uint64_t rows, uint64_t columns, TableNaming naming);
         // Create table with rows and columns with named only rows or columns
-        Table(int64_t rows, int64_t columns, TableNaming naming, std::vector<std::string> &names);
+        Table(uint64_t rows, uint64_t columns, TableNaming naming, std::vector<std::string> &names);
         // Create table with rows and columns with named rows and columns
-        Table(int64_t rows, int64_t columns, std::vector<std::string> &columnNames, std::vector<std::string> &rowNames);
+        Table(uint64_t rows, uint64_t columns, std::vector<std::string> &columnNames, std::vector<std::string> &rowNames);
 
         ~Table();
 
         // Read table from file
-        void Read(TableType type, const std::string& filename);
+        void Read(TableType type, numerical::Table::TableNaming naming, const std::string& filename);
         // Write table to file
         void Write(TableType type, const std::string& filename);
         // Prints table to console
         void Print(TableType type);
+        // Writes table to a stream
+        void Out(std::ostream &stream, TableType type);
 
         void AddRow();
         void AddColumn();
@@ -63,8 +65,8 @@ namespace numerical{
         // Number of digits after a coma
         int16_t outputPrecision = 3;
     private:
-        int64_t rows;
-        int64_t columns;
+        uint64_t rows;
+        uint64_t columns;
         bool isTableAllocated = false;
         double **table{};
         std::vector<std::string> *columnNames;

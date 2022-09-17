@@ -4,23 +4,23 @@
 #include "table.h"
 
 numerical::Table::Table() {
-    this->rowNames = nullptr;
-    this->columnNames = nullptr;
+    this->rowNames = new std::vector<std::string>();
+    this->columnNames = new std::vector<std::string>();
     this->rows = 0;
     this->columns = 0;
     this->naming = TableNaming::UNNAMED;
 }
 
-numerical::Table::Table(int64_t rows, int64_t columns, numerical::Table::TableNaming naming) {
-    this->rowNames = nullptr;
-    this->columnNames = nullptr;
+numerical::Table::Table(uint64_t rows, uint64_t columns, numerical::Table::TableNaming naming) {
+    this->rowNames = new std::vector<std::string>();
+    this->columnNames = new std::vector<std::string>();
     this->rows = rows;
     this-> columns = columns;
     table = _allocate_table();
     this->naming = naming;
 }
 
-numerical::Table::Table(int64_t rows, int64_t columns, numerical::Table::TableNaming naming, std::vector<std::string> &names) {
+numerical::Table::Table(uint64_t rows, uint64_t columns, numerical::Table::TableNaming naming, std::vector<std::string> &names) {
     this->rows = rows;
     this-> columns = columns;
     table = _allocate_table();
@@ -40,7 +40,7 @@ numerical::Table::Table(int64_t rows, int64_t columns, numerical::Table::TableNa
     }
 }
 
-numerical::Table::Table(int64_t rows, int64_t columns, std::vector<std::string> &columnNames, std::vector<std::string> &rowNames) {
+numerical::Table::Table(uint64_t rows, uint64_t columns, std::vector<std::string> &columnNames, std::vector<std::string> &rowNames) {
     this->rows = rows;
     this->columns = columns;
     this->naming = TableNaming::NAMED_ROWS_AND_COLUMNS;
@@ -58,12 +58,80 @@ numerical::Table::~Table() {
     INFO("Table deleted.")
 }
 
-void numerical::Table::Read(numerical::Table::TableType type,  const std::string& filename) {
+void numerical::Table::Read(numerical::Table::TableType type, numerical::Table::TableNaming naming,  const std::string& filename) {
     if (isTableAllocated){
         ERROR("Can't read already created table.")
+        return;
     }
-    //TODO
 
+    this->naming = naming;
+
+    std::fstream file(filename);
+
+    std::string delimiter;
+    if (type == TableType::GNUPLOT_TABLE){
+        delimiter = "\t";
+    }
+    if (type == TableType::CSV_TABLE){
+        delimiter = ",";
+    }
+    if (type == TableType::TSV_TABLE){
+        delimiter = "\t";
+    }
+
+    // parse column names
+    if (naming == TableNaming::NAMED_ROWS_AND_COLUMNS || naming == TableNaming::NAMED_COLUMNS){
+        std::string names;
+        std::getline(file, names);
+
+        // Deleting "# " from first row from GNUPlot table
+        if (type == TableType::GNUPLOT_TABLE){
+            if(names.substr(0, 2) == "# "){
+                names.erase(0, 2);
+            } else {
+                ERROR("Invalid GNUPlot table format.")
+            }
+        }
+
+        size_t pos;
+        std::string name;
+        while ((pos = names.find(delimiter)) != std::string::npos) {
+            name = names.substr(0, pos);
+            columnNames->push_back(name);
+            names.erase(0, pos + delimiter.length());
+        }
+        columnNames->push_back(names);
+    }
+
+    while (file.good()){
+        std::string row;
+        std::getline(file, row);
+
+        if(naming == TableNaming::NAMED_ROWS || naming == TableNaming::NAMED_ROWS_AND_COLUMNS){
+            std::string name = row.substr(0, row.find(delimiter));
+            rowNames->push_back(name);
+            row.erase(0, row.find(delimiter) + delimiter.length());
+        }
+
+        if(row.empty()){
+            break;
+        }
+
+        _add_row();
+
+        size_t pos;
+        for (uint64_t i = 0; (pos = row.find(delimiter)) != std::string::npos; ++i) {
+            double number;
+            number = stod(row.substr(0, pos));
+            row.erase(0, pos + delimiter.length());
+
+            if (i + 1 > columns){
+                _add_column();
+            }
+
+            table[rows-1][i] = number;
+        }
+    }
 }
 
 void numerical::Table::Write(numerical::Table::TableType type, const std::string& filename) {
@@ -72,104 +140,13 @@ void numerical::Table::Write(numerical::Table::TableType type, const std::string
         return;
     }
 
-    std::fstream file(filename, std::ios::out);
+    std::streambuf * buf;
+    std::ofstream of;
+    of.open(filename);
+    buf = of.rdbuf();
+    std::ostream out(buf);
 
-    if (type == TableType::GNUPLOT_TABLE){
-        if(naming == TableNaming::NAMED_ROWS_AND_COLUMNS){
-            WARNING("GNUplot table format isn't supporting rows naming. Skipping row names.")
-        }
-        if (naming == TableNaming::NAMED_ROWS){
-            WARNING("GNUplot table format isn't supporting rows naming. Writing table without column names.")
-        }
-        if(naming == TableNaming::NAMED_ROWS_AND_COLUMNS || naming == TableNaming::NAMED_COLUMNS){
-            file << "# ";
-            for (int i = 0; i < columns; ++i) {
-                file << (*columnNames)[i];
-                if (i != columns - 1){
-                    file << "\t";
-                }
-            }
-            file << std::endl;
-        }
-
-        for (int i = 0; i < rows; ++i) {
-            for (int j = 0; j < columns; ++j) {
-                file << std::fixed << std::setprecision(outputPrecision) << table[i][j];
-                if (j != columns - 1){
-                    file << "\t";
-                }
-            }
-            file << std::endl;
-        }
-    }
-
-    if (type == TableType::TSV_TABLE){
-        if(naming == TableNaming::NAMED_ROWS_AND_COLUMNS || naming == TableNaming::NAMED_COLUMNS){
-            for (int i = 0; i < columns; ++i) {
-                file << (*columnNames)[i];
-                if (i != columns - 1){
-                    file << "\t";
-                }
-            }
-            file << std::endl;
-        }
-        if(naming == TableNaming::NAMED_ROWS_AND_COLUMNS || naming == TableNaming::NAMED_ROWS){
-            for (int i = 0; i < rows; ++i) {
-                file << (*rowNames)[i] << "\t";
-                for (int j = 0; j < columns; ++j) {
-                     file << std::fixed << std::setprecision(outputPrecision) << table[i][j];
-                    if (j != columns - 1){
-                        file << "\t";
-                    }
-                }
-                file << std::endl;
-            }
-        } else {
-            for (int i = 0; i < rows; ++i) {
-                for (int j = 0; j < columns; ++j) {
-                    file << std::fixed << std::setprecision(outputPrecision) << table[i][j];
-                    if (j != columns - 1){
-                        file << "\t";
-                    }
-                }
-                file << std::endl;
-            }
-        }
-    }
-
-    if (type == TableType::CSV_TABLE){
-        if(naming == TableNaming::NAMED_ROWS_AND_COLUMNS || naming == TableNaming::NAMED_COLUMNS){
-            for (int i = 0; i < columns; ++i) {
-                file << (*columnNames)[i];
-                if (i != columns - 1){
-                    file << ",";
-                }
-            }
-            file << std::endl;
-        }
-        if(naming == TableNaming::NAMED_ROWS_AND_COLUMNS || naming == TableNaming::NAMED_ROWS){
-            for (int i = 0; i < rows; ++i) {
-                file << (*rowNames)[i] << ",";
-                for (int j = 0; j < columns; ++j) {
-                     file << std::fixed << std::setprecision(outputPrecision) << table[i][j];
-                    if (j != columns - 1){
-                        file << ",";
-                    }
-                }
-                file << std::endl;
-            }
-        } else {
-            for (int i = 0; i < rows; ++i) {
-                for (int j = 0; j < columns; ++j) {
-                    file << std::fixed << std::setprecision(outputPrecision) << table[i][j];
-                    if (j != columns - 1){
-                        file << ",";
-                    }
-                }
-                file << std::endl;
-            }
-        }
-    }
+    Out(out , type);
 }
 
 void numerical::Table::AddRow() {
@@ -251,103 +228,12 @@ void numerical::Table::Print(TableType type) {
         return;
     }
 
-    if (type == TableType::GNUPLOT_TABLE){
-        if(naming == TableNaming::NAMED_ROWS_AND_COLUMNS){
-            WARNING("GNUplot table format isn't supporting rows naming. Skipping row names.")
-        }
-        if (naming == TableNaming::NAMED_ROWS){
-            WARNING("GNUplot table format isn't supporting rows naming. Writing table without column names.")
-        }
-        if(naming == TableNaming::NAMED_ROWS_AND_COLUMNS || naming == TableNaming::NAMED_COLUMNS){
-            std::cout << "# ";
-            for (int i = 0; i < columns; ++i) {
-                std::cout << (*columnNames)[i];
-                if (i != columns - 1){
-                    std::cout << "\t";
-                }
-            }
-            std::cout << std::endl;
-        }
+    std::streambuf * buf;
+    std::ofstream of;
+    buf = std::cout.rdbuf();
+    std::ostream out(buf);
 
-        for (int i = 0; i < rows; ++i) {
-            for (int j = 0; j < columns; ++j) {
-                std::cout << std::fixed << std::setprecision(outputPrecision) << table[i][j];
-                if (j != columns - 1){
-                    std::cout << "\t";
-                }
-            }
-            std::cout << std::endl;
-        }
-    }
-
-    if (type == TableType::TSV_TABLE){
-        if(naming == TableNaming::NAMED_ROWS_AND_COLUMNS || naming == TableNaming::NAMED_COLUMNS){
-            for (int i = 0; i < columns; ++i) {
-                std::cout << (*columnNames)[i];
-                if (i != columns - 1){
-                    std::cout << "\t";
-                }
-            }
-            std::cout << std::endl;
-        }
-        if(naming == TableNaming::NAMED_ROWS_AND_COLUMNS || naming == TableNaming::NAMED_ROWS){
-            for (int i = 0; i < rows; ++i) {
-                std::cout << (*rowNames)[i] << "\t";
-                for (int j = 0; j < columns; ++j) {
-                    std::cout << std::fixed << std::setprecision(outputPrecision) << table[i][j];
-                    if (j != columns - 1){
-                        std::cout << "\t";
-                    }
-                }
-                std::cout << std::endl;
-            }
-        } else {
-            for (int i = 0; i < rows; ++i) {
-                for (int j = 0; j < columns; ++j) {
-                    std::cout << std::fixed << std::setprecision(outputPrecision) << table[i][j];
-                    if (j != columns - 1){
-                        std::cout << "\t";
-                    }
-                }
-                std::cout << std::endl;
-            }
-        }
-    }
-
-    if (type == TableType::CSV_TABLE){
-        if(naming == TableNaming::NAMED_ROWS_AND_COLUMNS || naming == TableNaming::NAMED_COLUMNS){
-            for (int i = 0; i < columns; ++i) {
-                std::cout << (*columnNames)[i];
-                if (i != columns - 1){
-                    std::cout << ",";
-                }
-            }
-            std::cout << std::endl;
-        }
-        if(naming == TableNaming::NAMED_ROWS_AND_COLUMNS || naming == TableNaming::NAMED_ROWS){
-            for (int i = 0; i < rows; ++i) {
-                std::cout << (*rowNames)[i] << ",";
-                for (int j = 0; j < columns; ++j) {
-                    std::cout << std::fixed << std::setprecision(outputPrecision) << table[i][j];
-                    if (j != columns - 1){
-                        std::cout << ",";
-                    }
-                }
-                std::cout << std::endl;
-            }
-        } else {
-            for (int i = 0; i < rows; ++i) {
-                for (int j = 0; j < columns; ++j) {
-                    std::cout << std::fixed << std::setprecision(outputPrecision) << table[i][j];
-                    if (j != columns - 1){
-                        std::cout << ",";
-                    }
-                }
-                std::cout << std::endl;
-            }
-        }
-    }
-    std::cout << std::endl;
+    Out(out , type);
 }
 
 void numerical::Table::AddRow(const std::string &newRowName) {
@@ -386,8 +272,6 @@ void numerical::Table::_add_row() {
         rows += 1;
         if (columns != 0){
             table = _allocate_table();
-        } else {
-            WARNING("Adding row to empty table.")
         }
     }
 
@@ -406,16 +290,114 @@ void numerical::Table::_add_column() {
         columns += 1;
         if (rows != 0){
             table = _allocate_table();
-        } else {
-            WARNING("Adding column to empty table.")
         }
     }
 }
 
 numerical::Table::Table(numerical::Table::TableNaming naming) {
-    this->rowNames = nullptr;
-    this->columnNames = nullptr;
+    this->rowNames = new std::vector<std::string>();
+    this->columnNames = new std::vector<std::string>();
     this->rows = 0;
     this->columns = 0;
     this->naming = naming;
+}
+
+void numerical::Table::Out(std::ostream &stream, TableType type) {
+    if (type == TableType::GNUPLOT_TABLE){
+        if(naming == TableNaming::NAMED_ROWS_AND_COLUMNS){
+            WARNING("GNUplot table format isn't supporting rows naming. Skipping row names.")
+        }
+        if (naming == TableNaming::NAMED_ROWS){
+            WARNING("GNUplot table format isn't supporting rows naming. Writing table without column names.")
+        }
+        if(naming == TableNaming::NAMED_ROWS_AND_COLUMNS || naming == TableNaming::NAMED_COLUMNS){
+            stream << "# ";
+            for (int i = 0; i < (*columnNames).size(); ++i) {
+                stream << (*columnNames)[i];
+                if (i != (*columnNames).size() - 1){
+                    stream << "\t";
+                }
+            }
+            stream << std::endl;
+        }
+
+        for (int i = 0; i < rows; ++i) {
+            for (int j = 0; j < columns; ++j) {
+                stream << std::fixed << std::setprecision(outputPrecision) << table[i][j];
+                if (j != columns - 1){
+                    stream << "\t";
+                }
+            }
+            stream << std::endl;
+        }
+    }
+
+    if (type == TableType::TSV_TABLE){
+        if(naming == TableNaming::NAMED_ROWS_AND_COLUMNS || naming == TableNaming::NAMED_COLUMNS){
+            for (int i = 0; i < (*columnNames).size(); ++i) {
+                stream << (*columnNames)[i];
+                if (i != (*columnNames).size() - 1){
+                    stream << "\t";
+                }
+            }
+            stream << std::endl;
+        }
+        if(naming == TableNaming::NAMED_ROWS_AND_COLUMNS || naming == TableNaming::NAMED_ROWS){
+            for (int i = 0; i < rows; ++i) {
+                stream << (*rowNames)[i] << "\t";
+                for (int j = 0; j < columns; ++j) {
+                    stream << std::fixed << std::setprecision(outputPrecision) << table[i][j];
+                    if (j != columns - 1){
+                        stream << "\t";
+                    }
+                }
+                stream << std::endl;
+            }
+        } else {
+            for (int i = 0; i < rows; ++i) {
+                for (int j = 0; j < columns; ++j) {
+                    stream << std::fixed << std::setprecision(outputPrecision) << table[i][j];
+                    if (j != columns - 1){
+                        stream << "\t";
+                    }
+                }
+                stream << std::endl;
+            }
+        }
+    }
+
+    if (type == TableType::CSV_TABLE){
+        if(naming == TableNaming::NAMED_ROWS_AND_COLUMNS || naming == TableNaming::NAMED_COLUMNS){
+            for (int i = 0; i < (*columnNames).size(); ++i) {
+                stream << (*columnNames)[i];
+                if (i != (*columnNames).size() - 1){
+                    stream << ",";
+                }
+            }
+            stream << std::endl;
+        }
+        if(naming == TableNaming::NAMED_ROWS_AND_COLUMNS || naming == TableNaming::NAMED_ROWS){
+            for (int i = 0; i < rows; ++i) {
+                stream << (*rowNames)[i] << ",";
+                for (int j = 0; j < columns; ++j) {
+                    std::cout << std::fixed << std::setprecision(outputPrecision) << table[i][j];
+                    if (j != columns - 1){
+                        std::cout << ",";
+                    }
+                }
+                stream << std::endl;
+            }
+        } else {
+            for (int i = 0; i < rows; ++i) {
+                for (int j = 0; j < columns; ++j) {
+                    stream << std::fixed << std::setprecision(outputPrecision) << table[i][j];
+                    if (j != columns - 1){
+                        stream << ",";
+                    }
+                }
+                stream << std::endl;
+            }
+        }
+    }
+    stream << std::endl;
 }

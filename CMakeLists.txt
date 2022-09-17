@@ -22,4 +22,6 @@ add_executable(test_table tests/table_test.cpp)
 target_include_directories(test_table PRIVATE include)
 target_link_libraries(test_table libnumerical)
 
-
+add_executable(test_table_read tests/table_read_test.cpp)
+target_include_directories(test_table_read PRIVATE include)
+target_link_libraries(test_table_read libnumerical)
