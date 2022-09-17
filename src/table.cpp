@@ -3,7 +3,11 @@
 //
 #include "table.h"
 
-numerical::Table::Table() = default;
+numerical::Table::Table() {
+    rows = 0;
+    columns = 0;
+    naming = TableNaming::UNNAMED;
+};
 
 numerical::Table::Table(int64_t rows, int64_t columns, numerical::Table::TableNaming naming) {
     this->rows = rows;
@@ -26,6 +30,9 @@ numerical::Table::Table(int64_t rows, int64_t columns, numerical::Table::TableNa
     }
     if (naming == TableNaming::NAMED_ROWS_AND_COLUMNS) {
         FATAL("Can't make table with rows and columns in this class constructor.")
+    }
+    if (naming == TableNaming::UNNAMED) {
+        FATAL("Can't make unnamed table with this constructor.")
     }
 }
 
@@ -162,15 +169,21 @@ void numerical::Table::Write(numerical::Table::TableType type, const std::string
 }
 
 void numerical::Table::AddRow() {
-    if (!isTableAllocated) {
-        ERROR("Can't write don't created table.")
+    if (naming == TableNaming::NAMED_ROWS_AND_COLUMNS || naming == TableNaming::NAMED_ROWS){
+        ERROR("For row-named table require row name to add new row.")
+        return;
     }
-    //TODO
+
+    _add_row();
 }
 
 void numerical::Table::AddColumn() {
+    if (naming == TableNaming::NAMED_ROWS_AND_COLUMNS || naming == TableNaming::NAMED_COLUMNS){
+        ERROR("For column-named table require column name to add new column.")
+        return;
+    }
 
-    //TODO
+    _add_column();
 }
 
 void numerical::Table::Sort(int64_t columnNumber) {
@@ -330,4 +343,66 @@ void numerical::Table::Print(TableType type) {
         }
     }
     std::cout << std::endl;
+}
+
+void numerical::Table::AddRow(const std::string &newRowName) {
+    if(naming == TableNaming::NAMED_COLUMNS || naming == TableNaming::UNNAMED){
+        ERROR("Can't add new row name to table without row names")
+    }
+
+    (*rowNames).push_back(newRowName);
+
+    _add_row();
+}
+
+void numerical::Table::AddColumn(const std::string &newColumnName) {
+    if(naming == TableNaming::NAMED_ROWS || naming == TableNaming::UNNAMED){
+        ERROR("Can't add new column name to table without column names")
+    }
+
+    (*rowNames).push_back(newColumnName);
+
+    _add_row();
+
+}
+
+void numerical::Table::_add_row() {
+    if (rows != 0){
+        rows += 1;
+        table = static_cast<double **>(realloc(table, sizeof(double *) * rows));
+        if (table == nullptr){
+            ERROR("Can't add new row.")
+        }
+        table[rows-1] = static_cast<double *>(malloc(sizeof(double) * columns));
+        if (table[rows-1] == nullptr){
+            ERROR("Can't allocate new row.")
+        }
+    } else {
+        rows += 1;
+        if (columns != 0){
+            _allocate_table(rows, columns);
+        } else {
+            WARNING("Adding row to empty table.")
+        }
+    }
+
+}
+
+void numerical::Table::_add_column() {
+    if (columns != 0){
+        columns += 1;
+        for (int i = 0; i < rows; ++i) {
+            table[i] = static_cast<double *>(realloc(table[i], sizeof(double) * columns));
+            if(table[i] == nullptr){
+                ERROR("Can't allocate new column.")
+            }
+        }
+    } else {
+        columns += 1;
+        if (rows != 0){
+            _allocate_table(rows, columns);
+        } else {
+            WARNING("Adding column to empty table.")
+        }
+    }
 }

@@ -24,7 +24,8 @@ namespace numerical{
         enum TableNaming{
             NAMED_COLUMNS = 0,
             NAMED_ROWS = 1,
-            NAMED_ROWS_AND_COLUMNS = 2
+            NAMED_ROWS_AND_COLUMNS = 2,
+            UNNAMED = 3
         };
         typedef TableNaming TableNaming;
 
@@ -41,6 +42,8 @@ namespace numerical{
 
         void AddRow();
         void AddColumn();
+        void AddRow(const std::string& newRowName);
+        void AddColumn(const std::string& newColumnName);
 
         void Sort(int64_t columnNumber);
 
@@ -53,12 +56,14 @@ namespace numerical{
         int64_t rows;
         int64_t columns;
         bool isTableAllocated = false;
-        double **table;
+        double **table{};
         std::vector<std::string> *columnNames;
         std::vector<std::string> *rowNames;
         TableNaming naming;
 
         double **_allocate_table(int64_t rows, int64_t columns);
+        void _add_row();
+        void _add_column();
     };
 }
 
