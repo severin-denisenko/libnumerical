@@ -9,12 +9,15 @@
 #include <string>
 #include <fstream>
 #include "logger.h"
+#include "vector.h"
+#include "one_diagonal_matrix.h"
 
 namespace numerical{
     class ThreeDiagonalMatrix{
     public:
         explicit ThreeDiagonalMatrix(int64_t size);
         explicit ThreeDiagonalMatrix(const std::string& filename);
+        ThreeDiagonalMatrix(const ThreeDiagonalMatrix &other);
         ~ThreeDiagonalMatrix();
         void Write(const std::string &filename);
 
@@ -28,6 +31,12 @@ namespace numerical{
         // Arithmetics
         ThreeDiagonalMatrix& operator +=(const ThreeDiagonalMatrix& other);
         ThreeDiagonalMatrix& operator -=(const ThreeDiagonalMatrix& other);
+        ThreeDiagonalMatrix& operator *=(const OneDiagonalMatrix& other);
+        Vector& operator *(const Vector& vector);
+
+        void DebugOut();
+
+        void Transpose();
 
         // returns matrix dimension
         int64_t Size() const;

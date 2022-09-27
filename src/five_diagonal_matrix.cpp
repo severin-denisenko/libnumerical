@@ -3,6 +3,7 @@
 //
 
 #include "five_diagonal_matrix.h"
+namespace numerical{
 
 numerical::FiveDiagonalMatrix::FiveDiagonalMatrix(int64_t size) {
     this->size = size;
@@ -158,14 +159,11 @@ const double &numerical::FiveDiagonalMatrix::operator()(int64_t i, int64_t j) co
         (i == size && (j == 3 || j == 2 || j == 1)) ||
         (i == size - 1 && (j == 4 || j == 3 || j == 2 || j == 1)) ||
         (2 < i < size - 1 && (j == 1 || j == 2 || j == 3 || j == 4 || j == 5))){
-        return matrix[i-1][j-1];
     } else {
         FATAL("Matrix out of borders.")
-        return matrix[i-1][j-1];
     }
-#else
-    return matrix[i-1][j-1];
 #endif
+    return matrix[i-1][j-1];
 }
 
 numerical::FiveDiagonalMatrix::FiveDiagonalMatrix(numerical::ThreeDiagonalMatrix &a, numerical::ThreeDiagonalMatrix &b) {
@@ -213,3 +211,206 @@ numerical::FiveDiagonalMatrix::FiveDiagonalMatrix(numerical::ThreeDiagonalMatrix
     (*this)(size, 3) = a(size, 1) * b(size - 1, 3) + a(size, 2) * b(size, 2);
 }
 
+FiveDiagonalMatrix &FiveDiagonalMatrix::operator=(const FiveDiagonalMatrix &other) {
+    // Guard self assignment
+    if (this == &other) {
+        return *this;
+    }
+
+    (*this).size = other.size;
+    (*this).matrix = _allocate_matrix(size);
+
+    for (int j = 1; j <= 3; ++j) {
+        (*this)(1, j) = other(1, j);
+    }
+    for (int j = 1; j <= 4; ++j) {
+        (*this)(2, j) = other(2, j);
+    }
+    for (int i = 3; i <= size - 2; ++i) {
+        for (int j = 1; j <= 5; ++j) {
+            (*this)(i, j) = other(i, j);
+        }
+    }
+    for (int j = 1; j <= 4; ++j) {
+        (*this)(size - 1, j) = other(size - 1, j);
+    }
+    for (int j = 1; j <= 3; ++j) {
+        (*this)(size, j) = other(size, j);
+    }
+
+    return *this;
+}
+
+FiveDiagonalMatrix &FiveDiagonalMatrix::operator*=(double num) {
+    for (int j = 1; j <= 3; ++j) {
+        (*this)(1, j) = (*this)(1, j) * num;
+    }
+    for (int j = 1; j <= 4; ++j) {
+        (*this)(2, j) = (*this)(2, j) * num;
+    }
+    for (int i = 3; i <= size - 2; ++i) {
+        for (int j = 1; j <= 5; ++j) {
+            (*this)(i, j) = (*this)(i, j) * num;
+        }
+    }
+    for (int j = 1; j <= 4; ++j) {
+        (*this)(size - 1, j) = (*this)(size - 1, j) * num;
+    }
+    for (int j = 1; j <= 3; ++j) {
+        (*this)(size, j) = (*this)(size, j) * num;
+    }
+
+    return *this;
+}
+
+FiveDiagonalMatrix &FiveDiagonalMatrix::operator+=(const FiveDiagonalMatrix &other) {
+    for (int j = 1; j <= 3; ++j) {
+        (*this)(1, j) += other(1, j);
+    }
+    for (int j = 1; j <= 4; ++j) {
+        (*this)(2, j) += other(2, j);
+    }
+    for (int i = 3; i <= size - 2; ++i) {
+        for (int j = 1; j <= 5; ++j) {
+            (*this)(i, j) += other(i, j);
+        }
+    }
+    for (int j = 1; j <= 4; ++j) {
+        (*this)(size - 1, j) += other(size - 1, j);
+    }
+    for (int j = 1; j <= 3; ++j) {
+        (*this)(size, j) += other(size, j);
+    }
+
+    return *this;
+}
+
+FiveDiagonalMatrix &FiveDiagonalMatrix::operator-=(const FiveDiagonalMatrix &other) {
+    for (int j = 1; j <= 3; ++j) {
+        (*this)(1, j) -= other(1, j);
+    }
+    for (int j = 1; j <= 4; ++j) {
+        (*this)(2, j) -= other(2, j);
+    }
+    for (int i = 3; i <= size - 2; ++i) {
+        for (int j = 1; j <= 5; ++j) {
+            (*this)(i, j) -= other(i, j);
+        }
+    }
+    for (int j = 1; j <= 4; ++j) {
+        (*this)(size - 1, j) -= other(size - 1, j);
+    }
+    for (int j = 1; j <= 3; ++j) {
+        (*this)(size, j) -= other(size, j);
+    }
+
+    return *this;
+}
+
+FiveDiagonalMatrix &FiveDiagonalMatrix::operator+=(const ThreeDiagonalMatrix &other) {
+    (*this)(1, 1) += other(1, 1);
+    (*this)(1, 2) += other(1, 2);
+
+    (*this)(2, 1) += other(2, 1);
+    (*this)(2, 2) += other(2, 2);
+    (*this)(2, 3) += other(2, 3);
+
+    for (int i = 3; i <= size - 2; ++i) {
+        (*this)(i, 2) += other(i, 1);
+        (*this)(i, 3) += other(i, 2);
+        (*this)(i, 4) += other(i, 3);
+    }
+
+    (*this)(size, 2) += other(size, 1);
+    (*this)(size, 3) += other(size, 2);
+
+    (*this)(size - 1, 2) += other(size - 1, 1);
+    (*this)(size - 1, 3) += other(size - 1, 2);
+    (*this)(size - 1, 4) += other(size - 1, 3);
+
+    return *this;
+}
+
+void FiveDiagonalMatrix::DebugOut() {
+    for (int j = 1; j <= 3; ++j) {
+        std::cout << std::setprecision(3) << std::fixed  << (*this)(1, j) << " ";
+    }
+    std::cout << std::endl;
+    for (int j = 1; j <= 4; ++j) {
+        std::cout << (*this)(2, j) << " ";
+    }
+    std::cout << std::endl;
+    for (int i = 3; i <= size - 2; ++i) {
+        for (int j = 1; j <= 5; ++j) {
+            std::cout << (*this)(i, j) << " ";
+        }
+        std::cout << std::endl;
+    }
+    for (int j = 1; j <= 4; ++j) {
+        std::cout << (*this)(size - 1, j) << " ";
+    }
+    std::cout << std::endl;
+    for (int j = 1; j <= 3; ++j) {
+        std::cout << (*this)(size, j) << " ";
+    }
+    std::cout << std::endl;
+}
+
+Vector &FiveDiagonalMatrix::operator*(const Vector &vector) {
+    auto *res = new Vector(size);
+
+    (*res)(1) = (*this)(1, 1) * vector(1) +
+                (*this)(1, 2) * vector(2) +
+                (*this)(1, 3) * vector(3);
+
+    (*res)(2) = (*this)(2, 1) * vector(1) +
+                (*this)(2, 2) * vector(2) +
+                (*this)(2, 3) * vector(3) +
+                (*this)(2, 4) * vector(4);
+
+    for (int i = 3; i <= size - 2; ++i) {
+        (*res)(i) = (*this)(i, 1) * vector(i - 2) +
+                        (*this)(i, 2) * vector(i - 1) +
+                        (*this)(i, 3) * vector(i) +
+                        (*this)(i, 4) * vector(i + 1) +
+                        (*this)(i, 5) * vector(i + 2);
+    }
+
+    (*res)(size - 1) = (*this)(size - 1, 1) * vector(size - 3) +
+                       (*this)(size - 1, 2) * vector(size - 2) +
+                       (*this)(size - 1, 3) * vector(size - 1) +
+                       (*this)(size - 1, 4) * vector(size);
+
+    (*res)(size) = (*this)(size, 1) * vector(size - 2) +
+                       (*this)(size, 2) * vector(size - 1) +
+                       (*this)(size, 3) * vector(size);
+
+    return *res;
+}
+
+FiveDiagonalMatrix::FiveDiagonalMatrix(const FiveDiagonalMatrix &other)
+{
+    this->size = other.size;
+    this->matrix = _allocate_matrix(size);
+
+    for (int j = 1; j <= 3; ++j) {
+        (*this)(1, j) = other(1, j);
+    }
+    for (int j = 1; j <= 4; ++j) {
+        (*this)(2, j) = other(2, j);
+    }
+    for (int i = 3; i <= size - 2; ++i) {
+        for (int j = 1; j <= 5; ++j) {
+            (*this)(i, j) = other(i, j);
+        }
+    }
+    for (int j = 1; j <= 4; ++j) {
+        (*this)(size - 1, j) = other(size - 1, j);
+    }
+    for (int j = 1; j <= 3; ++j) {
+        (*this)(size, j) = other(size, j);
+    }
+}
+
+
+}
