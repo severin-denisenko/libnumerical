@@ -7,7 +7,7 @@
 namespace numerical
 {
 
-    SquareMatrix::SquareMatrix(int64_t size)
+    SquareMatrix::SquareMatrix(int32_t size)
     {
         this->size = size;
 
@@ -59,7 +59,7 @@ namespace numerical
         INFO("Matrix allocated and red.");
     }
 
-    double **SquareMatrix::_allocate_matrix(int64_t size)
+    double **SquareMatrix::_allocate_matrix(int32_t size)
     {
         auto **_matrix = static_cast<double **>(malloc(sizeof(double *) * size));
 
@@ -95,7 +95,7 @@ namespace numerical
         }
     }
 
-    const double &SquareMatrix::operator()(int64_t i, int64_t j) const
+    const double &SquareMatrix::operator()(int32_t i, int32_t j) const
     {
         if (!(0 < i <= size && 0 < j <= size))
         {
@@ -105,7 +105,7 @@ namespace numerical
         return matrix[i - 1][j - 1];
     }
 
-    double &SquareMatrix::operator()(int64_t i, int64_t j)
+    double &SquareMatrix::operator()(int32_t i, int32_t j)
     {
         if (!(0 < i <= size && 0 < j <= size))
         {
@@ -141,7 +141,7 @@ namespace numerical
         return *this;
     }
 
-    int64_t SquareMatrix::Size() const
+    int32_t SquareMatrix::Size() const
     {
         return size;
     }
@@ -194,7 +194,7 @@ namespace numerical
         return *this;
     }
 
-    double *&SquareMatrix::operator()(int64_t i) const
+    double *&SquareMatrix::operator()(int32_t i) const
     {
         if (!(0 > i || i > size))
         {

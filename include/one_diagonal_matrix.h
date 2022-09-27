@@ -14,12 +14,12 @@ namespace numerical {
 
     class OneDiagonalMatrix {
     public:
-        explicit OneDiagonalMatrix(int64_t size);
+        explicit OneDiagonalMatrix(int32_t size);
         ~OneDiagonalMatrix();
 
         // Returns elements of the matrix
-        double& operator() (int64_t i);
-        const double& operator () (int64_t i) const;
+        double& operator() (int32_t i);
+        const double& operator () (int32_t i) const;
 
         void DebugOut();
 
@@ -28,9 +28,9 @@ namespace numerical {
         Vector& operator *(const Vector& other);
     private:
         double *matrix;
-        int64_t size;
+        int32_t size;
 
-        static double *_allocate_matrix(int64_t size);
+        static double *_allocate_matrix(int32_t size);
     };
 
 } // numerical

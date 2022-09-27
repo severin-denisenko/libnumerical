@@ -15,7 +15,7 @@ namespace numerical
         this->naming = TableNaming::UNNAMED;
     }
 
-    Table::Table(uint64_t rows, uint64_t columns, Table::TableNaming naming)
+    Table::Table(int32_t rows, int32_t columns, Table::TableNaming naming)
     {
         this->rowNames = new std::vector<std::string>();
         this->columnNames = new std::vector<std::string>();
@@ -25,7 +25,7 @@ namespace numerical
         this->naming = naming;
     }
 
-    Table::Table(uint64_t rows, uint64_t columns, Table::TableNaming naming, std::vector<std::string> &names)
+    Table::Table(int32_t rows, int32_t columns, Table::TableNaming naming, std::vector<std::string> &names)
     {
         this->rows = rows;
         this->columns = columns;
@@ -50,7 +50,7 @@ namespace numerical
         }
     }
 
-    Table::Table(uint64_t rows, uint64_t columns, std::vector<std::string> &columnNames,
+    Table::Table(int32_t rows, int32_t columns, std::vector<std::string> &columnNames,
                  std::vector<std::string> &rowNames)
     {
         this->rows = rows;
@@ -147,7 +147,7 @@ namespace numerical
             _add_row();
 
             size_t pos;
-            for (uint64_t i = 0; (pos = row.find(delimiter)) != std::string::npos; ++i)
+            for (int32_t i = 0; (pos = row.find(delimiter)) != std::string::npos; ++i)
             {
                 double number;
                 number = stod(row.substr(0, pos));
@@ -202,7 +202,7 @@ namespace numerical
         _add_column();
     }
 
-    void Table::Sort(int64_t columnNumber)
+    void Table::Sort(int32_t columnNumber)
     {
         if (!isTableAllocated)
         {
@@ -237,7 +237,7 @@ namespace numerical
         return _table;
     }
 
-    const double &Table::operator()(int64_t i, int64_t j) const
+    const double &Table::operator()(int32_t i, int32_t j) const
     {
         if (!(0 < i <= rows && 0 < j <= columns))
         {
@@ -246,7 +246,7 @@ namespace numerical
         return table[i - 1][j - 1];
     }
 
-    double &Table::operator()(int64_t i, int64_t j)
+    double &Table::operator()(int32_t i, int32_t j)
     {
         if (!(0 < i <= rows && 0 < j <= columns))
         {

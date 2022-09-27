@@ -40,13 +40,13 @@ namespace numerical
         explicit Table(TableNaming naming);
 
         // Create table with rows and columns with set naming
-        Table(uint64_t rows, uint64_t columns, TableNaming naming);
+        Table(int32_t rows, int32_t columns, TableNaming naming);
 
         // Create table with rows and columns with named only rows or columns
-        Table(uint64_t rows, uint64_t columns, TableNaming naming, std::vector<std::string> &names);
+        Table(int32_t rows, int32_t columns, TableNaming naming, std::vector<std::string> &names);
 
         // Create table with rows and columns with named rows and columns
-        Table(uint64_t rows, uint64_t columns, std::vector<std::string> &columnNames,
+        Table(int32_t rows, int32_t columns, std::vector<std::string> &columnNames,
               std::vector<std::string> &rowNames);
 
         ~Table();
@@ -71,18 +71,18 @@ namespace numerical
 
         void AddColumn(const std::string &newColumnName);
 
-        void Sort(int64_t columnNumber);
+        void Sort(int32_t columnNumber);
 
         // Returns elements of the table
-        double &operator()(int64_t i, int64_t j);
+        double &operator()(int32_t i, int32_t j);
 
-        const double &operator()(int64_t i, int64_t j) const;
+        const double &operator()(int32_t i, int32_t j) const;
 
         // Number of digits after a coma
         int16_t outputPrecision = 3;
     private:
-        uint64_t rows;
-        uint64_t columns;
+        int32_t rows;
+        int32_t columns;
         bool isTableAllocated = false;
         double **table{};
         std::vector<std::string> *columnNames;

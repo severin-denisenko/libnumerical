@@ -8,7 +8,7 @@ namespace numerical
 
     Vector::Vector() = default;
 
-    Vector::Vector(uint64_t size)
+    Vector::Vector(int32_t size)
     {
         this->size = size;
         vector = new std::vector<double>(size);
@@ -21,7 +21,7 @@ namespace numerical
         isAllocated = true;
     }
 
-    Vector::Vector(const std::string &filename, uint64_t skip)
+    Vector::Vector(const std::string &filename, int32_t skip)
     {
         Read(filename, skip);
         isAllocated = true;
@@ -75,7 +75,7 @@ namespace numerical
         file.close();
     }
 
-    void Vector::Read(const std::string &filename, uint64_t skip)
+    void Vector::Read(const std::string &filename, int32_t skip)
     {
         std::ifstream file(filename);
 
@@ -111,7 +111,7 @@ namespace numerical
         return vector->at(i - 1);
     }
 
-    uint64_t Vector::Size() const
+    int32_t Vector::Size() const
     {
         return size;
     }

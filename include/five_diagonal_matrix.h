@@ -17,7 +17,7 @@ namespace numerical
     class FiveDiagonalMatrix
     {
     public:
-        explicit FiveDiagonalMatrix(int64_t size);
+        explicit FiveDiagonalMatrix(int32_t size);
 
         // Read from file
         explicit FiveDiagonalMatrix(const std::string &filename);
@@ -46,17 +46,17 @@ namespace numerical
         Vector &operator*(const Vector &vector);
 
         // Returns elements of the matrix
-        double &operator()(int64_t i, int64_t j);
+        double &operator()(int32_t i, int32_t j);
 
-        const double &operator()(int64_t i, int64_t j) const;
+        const double &operator()(int32_t i, int32_t j) const;
 
         // returns matrix dimension
-        int64_t Size() const;
+        int32_t Size() const;
 
     private:
-        static double **_allocate_matrix(int64_t size);
+        static double **_allocate_matrix(int32_t size);
 
-        int64_t size;
+        int32_t size;
         double **matrix;
 
         void DebugOut();

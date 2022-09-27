@@ -5,7 +5,7 @@
 #include "five_diagonal_matrix.h"
 namespace numerical{
 
-numerical::FiveDiagonalMatrix::FiveDiagonalMatrix(int64_t size) {
+numerical::FiveDiagonalMatrix::FiveDiagonalMatrix(int32_t size) {
     this->size = size;
     matrix = _allocate_matrix(size);
     INFO("Matrix allocated.");
@@ -58,7 +58,7 @@ numerical::FiveDiagonalMatrix::~FiveDiagonalMatrix() {
     INFO("Matrix deleted.");
 }
 
-double **numerical::FiveDiagonalMatrix::_allocate_matrix(int64_t size) {
+double **numerical::FiveDiagonalMatrix::_allocate_matrix(int32_t size) {
     auto** _matrix = static_cast<double **>(malloc(sizeof(double *) * size));
     if (_matrix == nullptr) {
         FATAL("Can't allocate so much memory.");
@@ -131,11 +131,11 @@ void numerical::FiveDiagonalMatrix::Write(const std::string &filename) {
     file.close();
 }
 
-int64_t numerical::FiveDiagonalMatrix::Size() const {
+int32_t numerical::FiveDiagonalMatrix::Size() const {
     return size;
 }
 
-double &numerical::FiveDiagonalMatrix::operator()(int64_t i, int64_t j) {
+double &numerical::FiveDiagonalMatrix::operator()(int32_t i, int32_t j) {
     if (!((i == 1 && (j == 3 || j == 2 || j == 1)) ||
           (i == 2 && (j == 4 || j == 3 || j == 2 || j == 1)) ||
           (i == size && (j == 3 || j == 2 || j == 1)) ||
@@ -147,7 +147,7 @@ double &numerical::FiveDiagonalMatrix::operator()(int64_t i, int64_t j) {
     return matrix[i-1][j-1];
 }
 
-const double &numerical::FiveDiagonalMatrix::operator()(int64_t i, int64_t j) const {
+const double &numerical::FiveDiagonalMatrix::operator()(int32_t i, int32_t j) const {
     if (!((i == 1 && (j == 3 || j == 2 || j == 1)) ||
         (i == 2 && (j == 4 || j == 3 || j == 2 || j == 1)) ||
         (i == size && (j == 3 || j == 2 || j == 1)) ||

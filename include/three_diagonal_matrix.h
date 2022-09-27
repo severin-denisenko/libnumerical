@@ -15,15 +15,15 @@
 namespace numerical{
     class ThreeDiagonalMatrix{
     public:
-        explicit ThreeDiagonalMatrix(int64_t size);
+        explicit ThreeDiagonalMatrix(int32_t size);
         explicit ThreeDiagonalMatrix(const std::string& filename);
         ThreeDiagonalMatrix(const ThreeDiagonalMatrix &other);
         ~ThreeDiagonalMatrix();
         void Write(const std::string &filename);
 
         // Returns elements of the matrix
-        double& operator() (int64_t i, int64_t j);
-        const double& operator () (int64_t i, int64_t j) const;
+        double& operator() (int32_t i, int32_t j);
+        const double& operator () (int32_t i, int32_t j) const;
 
         // Copy operator
         ThreeDiagonalMatrix& operator =(const ThreeDiagonalMatrix& other);
@@ -39,11 +39,11 @@ namespace numerical{
         void Transpose();
 
         // returns matrix dimension
-        int64_t Size() const;
+        int32_t Size() const;
 
     private:
-        static double** _allocate_matrix(int64_t size);
-        int64_t size;
+        static double** _allocate_matrix(int32_t size);
+        int32_t size;
         double **matrix;
     };
 }

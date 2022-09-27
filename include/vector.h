@@ -21,17 +21,17 @@ namespace numerical{
         Vector();
 
         // Create new empty vector
-        explicit Vector(uint64_t size);
+        explicit Vector(int32_t size);
 
         // Read from file
         explicit Vector(const std::string& filename);
 
         // Read from file skipping rows
-        Vector(const std::string& filename, uint64_t skip);
+        Vector(const std::string& filename, int32_t skip);
         ~Vector();
 
         void Read(const std::string& filename);
-        void Read(const std::string& filename, uint64_t skip);
+        void Read(const std::string& filename, int32_t skip);
 
         void Write(const std::string& filename);
         void Print();
@@ -52,10 +52,10 @@ namespace numerical{
         double& operator() (int64_t i);
         const double& operator () (int64_t i) const;
 
-        uint64_t Size() const;
+        int32_t Size() const;
     private:
         std::vector<double> *vector;
-        uint64_t size;
+        int32_t size;
         bool isAllocated = false;
     };
 }

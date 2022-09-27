@@ -7,7 +7,7 @@
 namespace numerical
 {
 
-    ThreeDiagonalMatrix::ThreeDiagonalMatrix(int64_t size)
+    ThreeDiagonalMatrix::ThreeDiagonalMatrix(int32_t size)
     {
         this->size = size;
         matrix = _allocate_matrix(size);
@@ -64,7 +64,7 @@ namespace numerical
         INFO("Matrix deleted.");
     }
 
-    double **ThreeDiagonalMatrix::_allocate_matrix(int64_t size)
+    double **ThreeDiagonalMatrix::_allocate_matrix(int32_t size)
     {
         auto **_matrix = static_cast<double **>(malloc(sizeof(double *) * size));
         if (_matrix == nullptr)
@@ -121,7 +121,7 @@ namespace numerical
         file.close();
     }
 
-    int64_t ThreeDiagonalMatrix::Size() const
+    int32_t ThreeDiagonalMatrix::Size() const
     {
         return size;
     }
@@ -213,7 +213,7 @@ namespace numerical
         return *this;
     }
 
-    double &ThreeDiagonalMatrix::operator()(int64_t i, int64_t j)
+    double &ThreeDiagonalMatrix::operator()(int32_t i, int32_t j)
     {
         if (!((i == 1 && (j == 2 || j == 1)) ||
               (i == size && (j == 2 || j == 1)) ||
@@ -224,7 +224,7 @@ namespace numerical
         return matrix[i - 1][j - 1];
     }
 
-    const double &ThreeDiagonalMatrix::operator()(int64_t i, int64_t j) const
+    const double &ThreeDiagonalMatrix::operator()(int32_t i, int32_t j) const
     {
         if (!((i == 1 && (j == 2 || j == 1)) ||
               (i == size && (j == 2 || j == 1)) ||

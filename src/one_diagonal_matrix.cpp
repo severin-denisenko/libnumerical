@@ -5,12 +5,12 @@
 #include "one_diagonal_matrix.h"
 
 namespace numerical {
-    OneDiagonalMatrix::OneDiagonalMatrix(int64_t size) {
+    OneDiagonalMatrix::OneDiagonalMatrix(int32_t size) {
         this->size = size;
         matrix = _allocate_matrix(size);
     }
 
-    double *OneDiagonalMatrix::_allocate_matrix(int64_t size) {
+    double *OneDiagonalMatrix::_allocate_matrix(int32_t size) {
         auto *_matrix = static_cast<double *>(malloc(sizeof(double) * size));
 
         if (_matrix == nullptr){
@@ -24,7 +24,7 @@ namespace numerical {
         free(matrix);
     }
 
-    double &OneDiagonalMatrix::operator()(int64_t i) {
+    double &OneDiagonalMatrix::operator()(int32_t i) {
         if (i < 1 || i > size) {
             FATAL("Matrix out of borders.");
         }
@@ -32,7 +32,7 @@ namespace numerical {
         return matrix[i - 1];
     }
 
-    const double &OneDiagonalMatrix::operator()(int64_t i) const {
+    const double &OneDiagonalMatrix::operator()(int32_t i) const {
         if (i < 1 || i > size) {
             FATAL("Matrix out of borders.");
         }
