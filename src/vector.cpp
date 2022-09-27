@@ -93,4 +93,129 @@ namespace numerical
         file.close();
     }
 
+    double &Vector::operator()(int64_t i)
+    {
+        if (i > size || i < 1){
+            FATAL("Vector out of borders.");
+        }
+
+        return vector->at(i - 1);
+    }
+
+    const double &Vector::operator()(int64_t i) const
+    {
+        if (i > size || i < 1){
+            FATAL("Vector out of borders.");
+        }
+
+        return vector->at(i - 1);
+    }
+
+    uint64_t Vector::Size() const
+    {
+        return size;
+    }
+
+    double Vector::operator*(const Vector &other)
+    {
+        if (this->size != other.size){
+            FATAL("Can't multiply vectors different length");
+        }
+
+        double res = 0;
+
+        for (int i = 1; i <= size; ++i)
+        {
+            res += (*this)(i) * other(i);
+        }
+
+        return res;
+    }
+
+    Vector &Vector::operator+=(const Vector &other)
+    {
+        if (this->size != other.size){
+            FATAL("Can't add vectors different length");
+        }
+
+        for (int i = 0; i < size; ++i)
+        {
+            (*this)(i) += other(i);
+        }
+
+        return (*this);
+    }
+
+    Vector &Vector::operator-=(const Vector &other)
+    {
+        if (this->size != other.size){
+            FATAL("Can't subtract vectors different length");
+        }
+
+        for (int i = 0; i < size; ++i)
+        {
+            (*this)(i) -= other(i);
+        }
+
+        return (*this);
+    }
+
+    Vector &Vector::operator+(const Vector &other)
+    {
+        if (this->size != other.size){
+            FATAL("Can't add vectors different length");
+        }
+
+        auto *res = new Vector(size);
+
+        for (int i = 0; i < size; ++i)
+        {
+            (*res)(i) = (*this)(i) + other(i);
+        }
+
+        return (*res);
+    }
+
+    Vector &Vector::operator-(const Vector &other)
+    {
+        if (this->size != other.size){
+            FATAL("Can't subtract vectors different length");
+        }
+
+        auto *res = new Vector(size);
+
+        for (int i = 0; i < size; ++i)
+        {
+            (*res)(i) = (*this)(i) - other(i);
+        }
+
+        return (*res);
+    }
+
+    Vector &Vector::operator/(const Vector &other)
+    {
+        auto *res = new Vector(size);
+
+        if (this->size != other.size){
+            FATAL("Can't multiply vectors different length");
+        }
+
+        switch (size)
+        {
+            case 3:
+                (*res)(1) = (*this)(2) * other(3) - (*this)(3) * other(2);
+                (*res)(2) = - (*this)(1) * other(3) + (*this)(3) * other(1);
+                (*res)(2) = (*this)(1) * other(2) - (*this)(2) * other(1);
+                break;
+            case 7:
+                //TODO
+                FATAL("Not yet implemented.");
+                break;
+            default:
+                FATAL("Can't perform cross product in other then 3 and 7 dimensions.");
+        }
+
+        return *res;
+    }
+
 }

@@ -11,7 +11,13 @@ namespace numerical {
     }
 
     double *OneDiagonalMatrix::_allocate_matrix(int64_t size) {
-        return static_cast<double *>(malloc(sizeof(double) * size));
+        auto *_matrix = static_cast<double *>(malloc(sizeof(double) * size));
+
+        if (_matrix == nullptr){
+            FATAL("Can't allocate so much memory.");
+        }
+
+        return _matrix;
     }
 
     OneDiagonalMatrix::~OneDiagonalMatrix() {
@@ -19,21 +25,19 @@ namespace numerical {
     }
 
     double &OneDiagonalMatrix::operator()(int64_t i) {
-        if (1 <= i <= size) {
-            return matrix[i - 1];
-        } else {
-            std::cerr << "Matrix out of borders." << std::endl;
-            exit(1);
+        if (i < 1 || i > size) {
+            FATAL("Matrix out of borders.");
         }
+
+        return matrix[i - 1];
     }
 
     const double &OneDiagonalMatrix::operator()(int64_t i) const {
-        if (1 <= i <= size) {
-            return matrix[i - 1];
-        } else {
-            std::cerr << "Matrix out of borders." << std::endl;
-            exit(1);
+        if (i < 1 || i > size) {
+            FATAL("Matrix out of borders.");
         }
+
+        return matrix[i - 1];
     }
 
     OneDiagonalMatrix &OneDiagonalMatrix::operator=(const OneDiagonalMatrix &other) {
@@ -52,6 +56,10 @@ namespace numerical {
     }
 
     Vector &OneDiagonalMatrix::operator*(const Vector &vector) {
+        if (this->size != vector.Size()){
+            FATAL("Can't multiply matrix on vector different dimension.");
+        }
+
         auto *res = new Vector(size);
 
         for (int i = 1; i <= size; ++i) {

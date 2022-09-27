@@ -13,17 +13,17 @@
     #define LOG_LEVEL_INFO_ENABLED 1
 #endif
 
-#define FATAL(message) numerical::Logger::Log(numerical::Logger::LOG_LEVEL_FATAL, message);
-#define ERROR(message) numerical::Logger::Log(numerical::Logger::LOG_LEVEL_ERROR, message);
+#define FATAL(message) numerical::Logger::Log(numerical::Logger::LOG_LEVEL_FATAL, message)
+#define ERROR(message) numerical::Logger::Log(numerical::Logger::LOG_LEVEL_ERROR, message)
 
 #if LOG_LEVEL_INFO_ENABLED == 1
-#define INFO(message) numerical::Logger::Log(numerical::Logger::LOG_LEVEL_INFO, message);
+#define INFO(message) numerical::Logger::Log(numerical::Logger::LOG_LEVEL_INFO, message)
 #else
 #define INFO(message)
 #endif
 
 #if LOG_LEVEL_WARNING_ENABLED == 1
-#define WARNING(message) numerical::Logger::Log(numerical::Logger::LOG_LEVEL_WARNING, message);
+#define WARNING(message) numerical::Logger::Log(numerical::Logger::LOG_LEVEL_WARNING, message)
 #else
 #define WARNING(message)
 #endif

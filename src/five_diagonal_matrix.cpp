@@ -8,19 +8,19 @@ namespace numerical{
 numerical::FiveDiagonalMatrix::FiveDiagonalMatrix(int64_t size) {
     this->size = size;
     matrix = _allocate_matrix(size);
-    INFO("Matrix allocated.")
+    INFO("Matrix allocated.");
 }
 
 numerical::FiveDiagonalMatrix::FiveDiagonalMatrix(const std::string &filename) {
     std::fstream file(filename, std::ios::in);
     if (!file.good()) {
-        FATAL("Can't open file.")
+        FATAL("Can't open file.");
     }
 
     char a;
     file >> a;
     if (a != '#') {
-        FATAL("Can't read file: wrong format.")
+        FATAL("Can't read file: wrong format.");
     }
     file >> size;
 
@@ -46,7 +46,7 @@ numerical::FiveDiagonalMatrix::FiveDiagonalMatrix(const std::string &filename) {
 
     file.close();
 
-    INFO("Matrix allocated and red.")
+    INFO("Matrix allocated and red.");
 }
 
 numerical::FiveDiagonalMatrix::~FiveDiagonalMatrix() {
@@ -55,43 +55,43 @@ numerical::FiveDiagonalMatrix::~FiveDiagonalMatrix() {
     }
     free(matrix);
 
-    INFO("Matrix deleted.")
+    INFO("Matrix deleted.");
 }
 
 double **numerical::FiveDiagonalMatrix::_allocate_matrix(int64_t size) {
     auto** _matrix = static_cast<double **>(malloc(sizeof(double *) * size));
     if (_matrix == nullptr) {
-        FATAL("Can't allocate so much memory.")
+        FATAL("Can't allocate so much memory.");
     }
 
     _matrix[0] = static_cast<double *>(malloc(sizeof(double) * 3));
     if (_matrix[0] == nullptr) {
-        FATAL("Can't allocate so much memory.")
+        FATAL("Can't allocate so much memory.");
     }
 
     _matrix[1] = static_cast<double *>(malloc(sizeof(double) * 4));
     if (_matrix[1] == nullptr) {
-        FATAL("Can't allocate so much memory.")
+        FATAL("Can't allocate so much memory.");
     }
 
     for (int i = 2; i < size - 2; ++i) {
         _matrix[i] = static_cast<double *>(malloc(sizeof(double) * 5));
         if (_matrix[i] == nullptr) {
-            FATAL("Can't allocate so much memory.")
+            FATAL("Can't allocate so much memory.");
         }
     }
 
     _matrix[size - 2] = static_cast<double *>(malloc(sizeof(double) * 4));
     if (_matrix[size - 2] == nullptr) {
-        FATAL("Can't allocate so much memory.")
+        FATAL("Can't allocate so much memory.");
     }
 
     _matrix[size - 1] = static_cast<double *>(malloc(sizeof(double) * 3));
     if (_matrix[size - 1] == nullptr) {
-        FATAL("Can't allocate so much memory.")
+        FATAL("Can't allocate so much memory.");
     }
 
-    INFO("Matrix allocated.")
+    INFO("Matrix allocated.");
 
     return _matrix;
 }
@@ -136,39 +136,32 @@ int64_t numerical::FiveDiagonalMatrix::Size() const {
 }
 
 double &numerical::FiveDiagonalMatrix::operator()(int64_t i, int64_t j) {
-#if DEBUG_BUILD == 1
-    if ((i == 1 && (j == 3 || j == 2 || j == 1)) ||
-        (i == 2 && (j == 4 || j == 3 || j == 2 || j == 1)) ||
-        (i == size && (j == 3 || j == 2 || j == 1)) ||
-        (i == size - 1 && (j == 4 || j == 3 || j == 2 || j == 1)) ||
-        (2 < i < size - 1 && (j == 1 || j == 2 || j == 3 || j == 4 || j == 5))){
-        return matrix[i-1][j-1];
-    } else {
-        FATAL("Matrix out of borders.")
-        return matrix[i-1][j-1];
+    if (!((i == 1 && (j == 3 || j == 2 || j == 1)) ||
+          (i == 2 && (j == 4 || j == 3 || j == 2 || j == 1)) ||
+          (i == size && (j == 3 || j == 2 || j == 1)) ||
+          (i == size - 1 && (j == 4 || j == 3 || j == 2 || j == 1)) ||
+          (2 < i < size - 1 && (j == 1 || j == 2 || j == 3 || j == 4 || j == 5))))
+    {
+        FATAL("Matrix out of borders.");
     }
-#else
     return matrix[i-1][j-1];
-#endif
 }
 
 const double &numerical::FiveDiagonalMatrix::operator()(int64_t i, int64_t j) const {
-#if DEBUG_BUILD == 1
-    if ((i == 1 && (j == 3 || j == 2 || j == 1)) ||
+    if (!((i == 1 && (j == 3 || j == 2 || j == 1)) ||
         (i == 2 && (j == 4 || j == 3 || j == 2 || j == 1)) ||
         (i == size && (j == 3 || j == 2 || j == 1)) ||
         (i == size - 1 && (j == 4 || j == 3 || j == 2 || j == 1)) ||
-        (2 < i < size - 1 && (j == 1 || j == 2 || j == 3 || j == 4 || j == 5))){
-    } else {
-        FATAL("Matrix out of borders.")
+        (2 < i < size - 1 && (j == 1 || j == 2 || j == 3 || j == 4 || j == 5))))
+    {
+        FATAL("Matrix out of borders.");
     }
-#endif
     return matrix[i-1][j-1];
 }
 
 numerical::FiveDiagonalMatrix::FiveDiagonalMatrix(numerical::ThreeDiagonalMatrix &a, numerical::ThreeDiagonalMatrix &b) {
     if (a.Size() != b.Size()){
-        FATAL("Can't multiply matrices different dimensions.")
+        FATAL("Can't multiply matrices different dimensions.");
     }
 
     size = a.Size();

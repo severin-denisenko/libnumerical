@@ -13,7 +13,7 @@ namespace numerical
 
         matrix = _allocate_matrix(size);
 
-        INFO("Matrix allocated.")
+        INFO("Matrix allocated.");
     }
 
     SquareMatrix::~SquareMatrix()
@@ -25,7 +25,7 @@ namespace numerical
 
         free(matrix);
 
-        INFO("Matrix deleted.")
+        INFO("Matrix deleted.");
     }
 
     SquareMatrix::SquareMatrix(const std::string &filename)
@@ -33,14 +33,14 @@ namespace numerical
         std::fstream file(filename, std::ios::in);
         if (!file.good())
         {
-            FATAL("Can't open file.")
+            FATAL("Can't open file.");
         }
 
         char a;
         file >> a;
         if (a != '#')
         {
-            FATAL("Can't read file: wrong format.")
+            FATAL("Can't read file: wrong format.");
         }
         file >> size;
 
@@ -56,7 +56,7 @@ namespace numerical
 
         file.close();
 
-        INFO("Matrix allocated and red.")
+        INFO("Matrix allocated and red.");
     }
 
     double **SquareMatrix::_allocate_matrix(int64_t size)
@@ -65,7 +65,7 @@ namespace numerical
 
         if (_matrix == nullptr)
         {
-            FATAL("Can't allocate so much memory.")
+            FATAL("Can't allocate so much memory.");
         }
 
         for (int i = 0; i < size; ++i)
@@ -73,7 +73,7 @@ namespace numerical
             _matrix[i] = static_cast<double *>(malloc(sizeof(double) * size));
             if (_matrix[i] == nullptr)
             {
-                FATAL("Can't allocate so much memory.")
+                FATAL("Can't allocate so much memory.");
             }
         }
 
@@ -97,34 +97,22 @@ namespace numerical
 
     const double &SquareMatrix::operator()(int64_t i, int64_t j) const
     {
-#if DEBUG_BUILD == 1
-        if (0 < i <= size && 0 < j <= size)
+        if (!(0 < i <= size && 0 < j <= size))
         {
-            return matrix[i - 1][j - 1];
-        } else
-        {
-            FATAL("Matrix out of borders.")
-            return matrix[0][0];
+            FATAL("Matrix out of borders.");
         }
-#else
-        return matrix[i-1][j-1];
-#endif
+
+        return matrix[i - 1][j - 1];
     }
 
     double &SquareMatrix::operator()(int64_t i, int64_t j)
     {
-#if DEBUG_BUILD == 1
-        if (0 < i <= size && 0 < j <= size)
+        if (!(0 < i <= size && 0 < j <= size))
         {
-            return matrix[i - 1][j - 1];
-        } else
-        {
-            FATAL("Matrix out of borders.")
-            return matrix[0][0];
+            FATAL("Matrix out of borders.");
         }
-#else
-        return matrix[i-1][j-1];
-#endif
+
+        return matrix[i - 1][j - 1];
     }
 
     SquareMatrix &SquareMatrix::operator=(const SquareMatrix &other)
@@ -137,7 +125,7 @@ namespace numerical
 
         if (size != other.Size())
         {
-            ERROR("= operator to tho non-equal sizes matrices.")
+            ERROR("= operator to tho non-equal sizes matrices.");
         }
 
         for (int i = 1; i <= std::min(size, other.Size()); ++i)
@@ -162,7 +150,7 @@ namespace numerical
     {
         if (size != other.Size())
         {
-            ERROR("+ operator to tho non-equal sizes matrices.")
+            ERROR("+ operator to tho non-equal sizes matrices.");
         }
 
         for (int i = 1; i <= std::min(size, other.Size()); ++i)
@@ -180,7 +168,7 @@ namespace numerical
     {
         if (size != other.Size())
         {
-            FATAL("* operator to tho non-equal sizes matrices.")
+            FATAL("* operator to tho non-equal sizes matrices.");
         }
 
         SquareMatrix res = SquareMatrix(size);
@@ -208,25 +196,18 @@ namespace numerical
 
     double *&SquareMatrix::operator()(int64_t i) const
     {
-#if DEBUG_BUILD == 1
-        if (0 < i <= size)
+        if (!(0 > i || i > size))
         {
-            return matrix[i - 1];
-        } else
-        {
-            FATAL("Matrix out of borders.")
-            return matrix[0];
+            FATAL("Matrix out of borders.");
         }
-#else
         return matrix[i-1];
-#endif
     }
 
     SquareMatrix &SquareMatrix::operator-=(const SquareMatrix &other)
     {
         if (size != other.Size())
         {
-            WARNING("+ operator to tho non-equal sizes matrices.")
+            WARNING("+ operator to tho non-equal sizes matrices.");
         }
 
         for (int i = 1; i <= std::min(size, other.Size()); ++i)

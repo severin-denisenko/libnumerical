@@ -42,11 +42,11 @@ namespace numerical
         }
         if (naming == TableNaming::NAMED_ROWS_AND_COLUMNS)
         {
-            FATAL("Can't make table with rows and columns in this class constructor.")
+            FATAL("Can't make table with rows and columns in this class constructor.");
         }
         if (naming == TableNaming::UNNAMED)
         {
-            FATAL("Can't make unnamed table with this constructor.")
+            FATAL("Can't make unnamed table with this constructor.");
         }
     }
 
@@ -69,14 +69,14 @@ namespace numerical
             free(table[i]);
         }
         free(table);
-        INFO("Table deleted.")
+        INFO("Table deleted.");
     }
 
     void Table::Read(Table::TableType type, Table::TableNaming naming, const std::string &filename)
     {
         if (isTableAllocated)
         {
-            ERROR("Can't read already created table.")
+            ERROR("Can't read already created table.");
             return;
         }
 
@@ -112,7 +112,7 @@ namespace numerical
                     names.erase(0, 2);
                 } else
                 {
-                    ERROR("Invalid GNUPlot table format.")
+                    ERROR("Invalid GNUPlot table format.");
                 }
             }
 
@@ -167,7 +167,7 @@ namespace numerical
     {
         if (!isTableAllocated)
         {
-            ERROR("Can't write don't created table.")
+            ERROR("Can't write don't created table.");
             return;
         }
 
@@ -184,7 +184,7 @@ namespace numerical
     {
         if (naming == TableNaming::NAMED_ROWS_AND_COLUMNS || naming == TableNaming::NAMED_ROWS)
         {
-            ERROR("For row-named table require row name to add new row.")
+            ERROR("For row-named table require row name to add new row.");
             return;
         }
 
@@ -195,7 +195,7 @@ namespace numerical
     {
         if (naming == TableNaming::NAMED_ROWS_AND_COLUMNS || naming == TableNaming::NAMED_COLUMNS)
         {
-            ERROR("For column-named table require column name to add new column.")
+            ERROR("For column-named table require column name to add new column.");
             return;
         }
 
@@ -206,10 +206,10 @@ namespace numerical
     {
         if (!isTableAllocated)
         {
-            ERROR("Can't write don't created table.")
+            ERROR("Can't write don't created table.");
         }
 
-        ERROR("Isn't implemented function")
+        FATAL("Isn't implemented function");
         //TODO
     }
 
@@ -219,7 +219,7 @@ namespace numerical
 
         if (_table == nullptr)
         {
-            FATAL("Can't allocate so much memory.")
+            FATAL("Can't allocate so much memory.");
         }
 
         for (int i = 0; i < rows; ++i)
@@ -227,12 +227,12 @@ namespace numerical
             _table[i] = static_cast<double *>(malloc(sizeof(double) * columns));
             if (_table[i] == nullptr)
             {
-                FATAL("Can't allocate so much memory.")
+                FATAL("Can't allocate so much memory.");
             }
         }
 
         isTableAllocated = true;
-        INFO("Table allocated.")
+        INFO("Table allocated.");
 
         return _table;
     }
@@ -241,7 +241,7 @@ namespace numerical
     {
         if (!(0 < i <= rows && 0 < j <= columns))
         {
-            FATAL("Matrix out of borders.")
+            FATAL("Matrix out of borders.");
         }
         return table[i - 1][j - 1];
     }
@@ -250,7 +250,7 @@ namespace numerical
     {
         if (!(0 < i <= rows && 0 < j <= columns))
         {
-            FATAL("Matrix out of borders.")
+            FATAL("Matrix out of borders.");
         }
         return table[i - 1][j - 1];
     }
@@ -259,7 +259,7 @@ namespace numerical
     {
         if (!isTableAllocated)
         {
-            ERROR("Can't print don't created table.")
+            ERROR("Can't print don't created table.");
             return;
         }
 
@@ -275,7 +275,7 @@ namespace numerical
     {
         if (naming == TableNaming::NAMED_COLUMNS || naming == TableNaming::UNNAMED)
         {
-            ERROR("Can't add new row name to table without row names")
+            ERROR("Can't add new row name to table without row names");
         }
 
         (*rowNames).push_back(newRowName);
@@ -287,7 +287,7 @@ namespace numerical
     {
         if (naming == TableNaming::NAMED_ROWS || naming == TableNaming::UNNAMED)
         {
-            ERROR("Can't add new column name to table without column names")
+            ERROR("Can't add new column name to table without column names");
         }
 
         (*columnNames).push_back(newColumnName);
@@ -304,12 +304,12 @@ namespace numerical
             table = static_cast<double **>(realloc(table, sizeof(double *) * rows));
             if (table == nullptr)
             {
-                ERROR("Can't add new row.")
+                ERROR("Can't add new row.");
             }
             table[rows - 1] = static_cast<double *>(malloc(sizeof(double) * columns));
             if (table[rows - 1] == nullptr)
             {
-                ERROR("Can't allocate new row.")
+                ERROR("Can't allocate new row.");
             }
         } else
         {
@@ -332,7 +332,7 @@ namespace numerical
                 table[i] = static_cast<double *>(realloc(table[i], sizeof(double) * columns));
                 if (table[i] == nullptr)
                 {
-                    ERROR("Can't allocate new column.")
+                    ERROR("Can't allocate new column.");
                 }
             }
         } else
@@ -360,11 +360,11 @@ namespace numerical
         {
             if (naming == TableNaming::NAMED_ROWS_AND_COLUMNS)
             {
-                WARNING("GNUplot table format isn't supporting rows naming. Skipping row names.")
+                WARNING("GNUplot table format isn't supporting rows naming. Skipping row names.");
             }
             if (naming == TableNaming::NAMED_ROWS)
             {
-                WARNING("GNUplot table format isn't supporting rows naming. Writing table without column names.")
+                WARNING("GNUplot table format isn't supporting rows naming. Writing table without column names.");
             }
             if (naming == TableNaming::NAMED_ROWS_AND_COLUMNS || naming == TableNaming::NAMED_COLUMNS)
             {

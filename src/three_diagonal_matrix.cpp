@@ -11,7 +11,7 @@ namespace numerical
     {
         this->size = size;
         matrix = _allocate_matrix(size);
-        INFO("Matrix allocated.")
+        INFO("Matrix allocated.");
     }
 
     ThreeDiagonalMatrix::ThreeDiagonalMatrix(const std::string &filename)
@@ -19,14 +19,14 @@ namespace numerical
         std::fstream file(filename, std::ios::in);
         if (!file.good())
         {
-            FATAL("Can't open file.")
+            FATAL("Can't open file.");
         }
 
         char a;
         file >> a;
         if (a != '#')
         {
-            FATAL("Can't read file: wrong format.")
+            FATAL("Can't read file: wrong format.");
         }
         file >> size;
 
@@ -50,7 +50,7 @@ namespace numerical
 
         file.close();
 
-        INFO("Matrix allocated and red.")
+        INFO("Matrix allocated and red.");
     }
 
     ThreeDiagonalMatrix::~ThreeDiagonalMatrix()
@@ -61,7 +61,7 @@ namespace numerical
         }
         free(matrix);
 
-        INFO("Matrix deleted.")
+        INFO("Matrix deleted.");
     }
 
     double **ThreeDiagonalMatrix::_allocate_matrix(int64_t size)
@@ -69,7 +69,7 @@ namespace numerical
         auto **_matrix = static_cast<double **>(malloc(sizeof(double *) * size));
         if (_matrix == nullptr)
         {
-            FATAL("Can't allocate so much memory.")
+            FATAL("Can't allocate so much memory.");
         }
 
         _matrix[0] = static_cast<double *>(malloc(sizeof(double) * 2));
@@ -79,7 +79,7 @@ namespace numerical
             _matrix[i] = static_cast<double *>(malloc(sizeof(double) * 3));
             if (_matrix[i] == nullptr)
             {
-                FATAL("Can't allocate so much memory.")
+                FATAL("Can't allocate so much memory.");
             }
         }
 
@@ -131,7 +131,7 @@ namespace numerical
     {
         if (size != other.Size())
         {
-            ERROR("= operator to tho non-equal sizes matrices.")
+            ERROR("= operator to tho non-equal sizes matrices.");
         }
 
         for (int j = 1; j <= 2; ++j)
@@ -164,7 +164,7 @@ namespace numerical
 
         if (size != other.Size())
         {
-            ERROR("= operator to tho non-equal sizes matrices.")
+            ERROR("= operator to tho non-equal sizes matrices.");
         }
 
         for (int j = 1; j <= 2; ++j)
@@ -191,7 +191,7 @@ namespace numerical
     {
         if (size != other.Size())
         {
-            ERROR("= operator to tho non-equal sizes matrices.")
+            ERROR("= operator to tho non-equal sizes matrices.");
         }
 
         for (int j = 1; j <= 2; ++j)
@@ -219,7 +219,7 @@ namespace numerical
               (i == size && (j == 2 || j == 1)) ||
               (1 < i < size && (j == 1 || j == 2 || j == 3))))
         {
-            FATAL("Matrix out of borders.")
+            FATAL("Matrix out of borders.");
         }
         return matrix[i - 1][j - 1];
     }
@@ -230,7 +230,7 @@ namespace numerical
               (i == size && (j == 2 || j == 1)) ||
               (1 < i < size && (j == 1 || j == 2 || j == 3))))
         {
-            FATAL("Matrix out of borders.")
+            FATAL("Matrix out of borders.");
         }
         return matrix[i - 1][j - 1];
     }

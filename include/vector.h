@@ -11,13 +11,22 @@
 #include <ostream>
 #include <string>
 #include <vector>
+#include "logger.h"
 
 namespace numerical{
     class Vector{
     public:
+
+        // Create new vector for read
         Vector();
+
+        // Create new empty vector
         explicit Vector(uint64_t size);
+
+        // Read from file
         explicit Vector(const std::string& filename);
+
+        // Read from file skipping rows
         Vector(const std::string& filename, uint64_t skip);
         ~Vector();
 
@@ -28,14 +37,22 @@ namespace numerical{
         void Print();
         void Out(std::ostream &stream);
 
-        void dot(Vector other);
-        void vec(Vector other);
-
+        // Basic arithmetics
         Vector& operator +=(const Vector& other);
         Vector& operator -=(const Vector& other);
+        Vector& operator +(const Vector& other);
+        Vector& operator -(const Vector& other);
+
+        // Dot product
+        double operator *(const Vector& other);
+
+        // Cross product
+        Vector& operator /(const Vector& other);
 
         double& operator() (int64_t i);
         const double& operator () (int64_t i) const;
+
+        uint64_t Size() const;
     private:
         std::vector<double> *vector;
         uint64_t size;
