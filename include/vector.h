@@ -49,8 +49,8 @@ namespace numerical{
         // Cross product
         Vector& operator /(const Vector& other);
 
-        double& operator() (int64_t i);
-        const double& operator () (int64_t i) const;
+        double& operator() (int32_t i);
+        const double& operator () (int32_t i) const;
 
         int32_t Size() const;
     private:

@@ -2,7 +2,7 @@
 // Created by Severin on 15.09.2022.
 //
 
-#include "sqare_matrix.h"
+#include "square_matrix.h"
 
 namespace numerical
 {

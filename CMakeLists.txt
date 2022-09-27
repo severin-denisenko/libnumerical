@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 14)
 add_definitions(-DDEBUG_BUILD=1)
 
 add_library(libnumerical
-        include/sqare_matrix.h  src/square_matrix.cpp
+        include/square_matrix.h src/square_matrix.cpp
         include/logger.h src/logger.cpp
         include/three_diagonal_matrix.h src/three_diagonal_matrix.cpp
         include/five_diagonal_matrix.h src/five_diagonal_matrix.cpp
@@ -14,6 +14,7 @@ add_library(libnumerical
         include/interpolator.h src/interpolator.cpp
         include/vector.h src/vector.cpp
         include/one_diagonal_matrix.h src/one_diagonal_matrix.cpp
+        include/linear_solver.h src/linear_solver.cpp
         )
 target_include_directories(libnumerical PRIVATE include)
 

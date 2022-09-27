@@ -22,6 +22,7 @@ numerical::FiveDiagonalMatrix::FiveDiagonalMatrix(const std::string &filename) {
     if (a != '#') {
         FATAL("Can't read file: wrong format.");
     }
+
     file >> size;
 
     matrix = _allocate_matrix(size);

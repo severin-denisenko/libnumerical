@@ -2,8 +2,8 @@
 // Created by Severin on 15.09.2022.
 //
 
-#ifndef LIBNUMERICAL_SQARE_MATRIX_H
-#define LIBNUMERICAL_SQARE_MATRIX_H
+#ifndef LIBNUMERICAL_SQUARE_MATRIX_H
+#define LIBNUMERICAL_SQUARE_MATRIX_H
 
 #include <cstdlib>
 #include <fstream>
@@ -47,4 +47,4 @@ namespace numerical{
     };
 }
 
-#endif //LIBNUMERICAL_SQARE_MATRIX_H
+#endif //LIBNUMERICAL_SQUARE_MATRIX_H

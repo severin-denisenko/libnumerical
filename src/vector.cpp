@@ -93,7 +93,7 @@ namespace numerical
         file.close();
     }
 
-    double &Vector::operator()(int64_t i)
+    double &Vector::operator()(int32_t i)
     {
         if (i > size || i < 1){
             FATAL("Vector out of borders.");
@@ -102,7 +102,7 @@ namespace numerical
         return vector->at(i - 1);
     }
 
-    const double &Vector::operator()(int64_t i) const
+    const double &Vector::operator()(int32_t i) const
     {
         if (i > size || i < 1){
             FATAL("Vector out of borders.");
