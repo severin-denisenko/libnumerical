@@ -7,4 +7,5 @@ Library contains:
 
 Future updates will include:
 - Various interpolators.
-- Other numerical methods.
+- Solvers for non-linear systems.
+- Other.
