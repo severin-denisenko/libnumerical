@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.22)
 project(libnumerical)
 
+#set(CMAKE_CXX_COMPILER g++-11)
+add_compile_options(-Wall -Wextra -Wfloat-equal -Wundef -Wcast-align -Wwrite-strings -Wmissing-declarations -Wlogical-op -Wredundant-decls -Woverloaded-virtual -pedantic)
 set(CMAKE_CXX_STANDARD 14)
 
 add_definitions(-DDEBUG_BUILD=1)

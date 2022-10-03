@@ -2,6 +2,7 @@
 // Created by Severin on 16.09.2022.
 //
 
+#include <iomanip>
 #include "three_diagonal_matrix.h"
 
 namespace numerical
@@ -217,7 +218,7 @@ namespace numerical
     {
         if (!((i == 1 && (j == 2 || j == 1)) ||
               (i == size && (j == 2 || j == 1)) ||
-              (1 < i < size && (j == 1 || j == 2 || j == 3))))
+              (1 < i && i < size && (j == 1 || j == 2 || j == 3))))
         {
             FATAL("Matrix out of borders.");
         }
@@ -228,7 +229,7 @@ namespace numerical
     {
         if (!((i == 1 && (j == 2 || j == 1)) ||
               (i == size && (j == 2 || j == 1)) ||
-              (1 < i < size && (j == 1 || j == 2 || j == 3))))
+              (1 < i && i < size && (j == 1 || j == 2 || j == 3))))
         {
             FATAL("Matrix out of borders.");
         }

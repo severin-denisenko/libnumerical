@@ -3,6 +3,7 @@
 //
 
 #include "five_diagonal_matrix.h"
+#include <iomanip>
 namespace numerical{
 
 numerical::FiveDiagonalMatrix::FiveDiagonalMatrix(int32_t size) {
@@ -141,7 +142,7 @@ double &numerical::FiveDiagonalMatrix::operator()(int32_t i, int32_t j) {
           (i == 2 && (j == 4 || j == 3 || j == 2 || j == 1)) ||
           (i == size && (j == 3 || j == 2 || j == 1)) ||
           (i == size - 1 && (j == 4 || j == 3 || j == 2 || j == 1)) ||
-          (2 < i < size - 1 && (j == 1 || j == 2 || j == 3 || j == 4 || j == 5))))
+          ((2 < i && i < size - 1) && (j == 1 || j == 2 || j == 3 || j == 4 || j == 5))))
     {
         FATAL("Matrix out of borders.");
     }
@@ -153,7 +154,7 @@ const double &numerical::FiveDiagonalMatrix::operator()(int32_t i, int32_t j) co
         (i == 2 && (j == 4 || j == 3 || j == 2 || j == 1)) ||
         (i == size && (j == 3 || j == 2 || j == 1)) ||
         (i == size - 1 && (j == 4 || j == 3 || j == 2 || j == 1)) ||
-        (2 < i < size - 1 && (j == 1 || j == 2 || j == 3 || j == 4 || j == 5))))
+        ((2 < i && i < size - 1) && (j == 1 || j == 2 || j == 3 || j == 4 || j == 5))))
     {
         FATAL("Matrix out of borders.");
     }

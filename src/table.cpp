@@ -1,6 +1,7 @@
 //
 // Created by Severin on 17.09.2022.
 //
+#include <iomanip>
 #include "table.h"
 
 namespace numerical
@@ -239,7 +240,7 @@ namespace numerical
 
     const double &Table::operator()(int32_t i, int32_t j) const
     {
-        if (!(0 < i <= rows && 0 < j <= columns))
+        if (!(0 < i && i <= rows && 0 < j && j <= columns))
         {
             FATAL("Matrix out of borders.");
         }
@@ -248,7 +249,7 @@ namespace numerical
 
     double &Table::operator()(int32_t i, int32_t j)
     {
-        if (!(0 < i <= rows && 0 < j <= columns))
+        if (!(0 < i && i <= rows && 0 < j && j <= columns))
         {
             FATAL("Matrix out of borders.");
         }

@@ -97,7 +97,7 @@ namespace numerical
 
     const double &SquareMatrix::operator()(int32_t i, int32_t j) const
     {
-        if (!(0 < i <= size && 0 < j <= size))
+        if (!(0 < i && i <= size && 0 < j && j <= size))
         {
             FATAL("Matrix out of borders.");
         }
@@ -107,7 +107,7 @@ namespace numerical
 
     double &SquareMatrix::operator()(int32_t i, int32_t j)
     {
-        if (!(0 < i <= size && 0 < j <= size))
+        if (!(0 < i && i <= size && 0 < j && j <= size))
         {
             FATAL("Matrix out of borders.");
         }
